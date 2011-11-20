@@ -3,12 +3,15 @@ require 'uuid'
 require 'redis'
 require 'sinatra/base'
 require 'typhoeus'
+require 'geoloqi'
 HOST = ENV["LOQIHOST"]
+client_id, client_secret = ENV["LOQICLIENT"].split ":"
+
 
 uuid = UUID.new
 redis = Redis.new
 bus = Bus.new
-client_id, client_secret = ENV["LOQICLIENT"].split ":"
+
 bus = Bus.new
 token_redirect = "#{HOST}/token"
 token_url = "https://api.geoloqi.com/1/oauth/token"
@@ -20,18 +23,24 @@ auth_redirect = "#{HOST}/auth"
 
 
 class LoqiAuth < Sinatra::Base
+
   redis = Redis.new
   bus = Bus.new
   token_redirect = "#{HOST}/token"
   token_url = "https://api.geoloqi.com/1/oauth/token"
   client_id, client_secret = ENV["LOQICLIENT"].split ":"
   auth_redirect = "#{HOST}/auth"
+  configure do
+    Geoloqi.config :client_id => client_id, :client_secret => client_secret
+  end
   get "/auth" do
 
     this_user = redis.get "uuid:#{request.params["state"]}"
     code = request.params["code"]
     token_response = Typhoeus::Request.post("#{token_url}", :params => {:grant_type => "authorization_code", :code => code, :redirect_uri => token_redirect, :client_id => client_id, :client_secret => client_secret})
     json_token = JSON.parse token_response.body
+
+    redis.set "auth:#{this_user}", token_response.body
     access_token = json_token["access_token"]
     refresh_token = json_token["refresh_token"]
     group_response = Typhoeus::Request.post("http://api.geoloqi.com/1/group/join/hH8rzSh_i?oauth_token=#{access_token}")
@@ -70,5 +79,14 @@ bus.on "rbio::geoloqi::send_friends" do |bus_data|
   end
 
   bus.send "rbio::irc::send_msg_user", :user => bus_data["user"], :message => peeps.join("\n")
+
+end
+
+
+bus.on "rbio::geoloqi::send_geonote" do |bus_data|
+  auth = redis.get "auth:#{bus_data["user"]}"
+  session = Geoloqi::Session.new :auth =>JSON.parse(auth)
+  create_response = session.post "/geonote/create", :text => bus_data["message"], :place_id => bus_data["place"]
+  ""
 end
 
