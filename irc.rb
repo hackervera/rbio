@@ -30,7 +30,7 @@ bot = Cinch::Bot.new do
 end
 
 
-bus.add "rbio::irc::send_msg_chan" do |msg_data|
+bus.on "rbio::irc::send_msg_chan" do |msg_data|
 
   channel = bot.channel_manager.find(msg_data["channel"])
   begin
@@ -40,24 +40,24 @@ bus.add "rbio::irc::send_msg_chan" do |msg_data|
   end
 end
 
-bus.add "rbio::irc::send_msg_user" do |msg_data|
+bus.on "rbio::irc::send_msg_user" do |msg_data|
   user = bot.user_manager.find(msg_data["user"])
   user.send msg_data["message"]
 end
 
 
-bus.add "rbio::irc::join_chan" do |chan_data|
+bus.on "rbio::irc::join_chan" do |chan_data|
   bot.join(chan_data["channel"])
 end
 
-bus.add "rbio::irc::part_chan" do |chan_data|
+bus.on "rbio::irc::part_chan" do |chan_data|
   bot.part(chan_data["channel"])
 end
 
 
 
 
-bus.add "rbio::irc::verify" do |bus_data|
+bus.on "rbio::irc::verify" do |bus_data|
 
 
   user_info = bot.user_manager.find(bus_data["user"])

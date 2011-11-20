@@ -6,7 +6,7 @@ bus = Bus.new
 uuid = UUID.new
 redis = Redis.new
 
-bus.add "rbio::irc::got_priv_msg" do |bus_data|
+bus.on "rbio::irc::got_priv_msg" do |bus_data|
   if bus_data["message"] =~ /verify me/
     bus.send "rbio::geoloqi::send_auth_url", :user => bus_data["user"]
 

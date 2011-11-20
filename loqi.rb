@@ -51,7 +51,7 @@ end
 puts "FOOOO"
 
 
-bus.add "rbio::geoloqi::send_auth_url" do |bus_data|
+bus.on "rbio::geoloqi::send_auth_url" do |bus_data|
   this_uuid = uuid.generate
   redis.set "uuid:#{this_uuid}", bus_data["user"]
   auth_url = "#{authorize_url}?response_type=code&client_id=#{client_id}&redirect_uri=#{auth_redirect}&state=#{this_uuid}"
@@ -59,7 +59,7 @@ bus.add "rbio::geoloqi::send_auth_url" do |bus_data|
   bus.send "rbio::irc::send_msg_user", :user => bus_data["user"], :message => auth_url
 end
 
-bus.add "rbio::geoloqi::send_friends" do |bus_data|
+bus.on "rbio::geoloqi::send_friends" do |bus_data|
 
   access_token = redis.get "token:#{bus_data["user"]}"
   group_location = Typhoeus::Request.get("http://api.geoloqi.com/1/group/last/hH8rzSh_i?oauth_token=#{access_token}")

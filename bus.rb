@@ -7,7 +7,7 @@ class Bus
     at_exit { @threads.each(&:join) }
   end
 
-  def add(channel, &proc)
+  def on(channel, &proc)
     #@listeners ||= []
 
     listener = Redis.new
