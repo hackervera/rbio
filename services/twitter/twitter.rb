@@ -1,6 +1,7 @@
 require 'redis'
 require 'json'
 require 'oauth'
+require 'yaml'
 require_relative '../../lib/bus'
 bus = Bus.new
 redis = Redis.new
