@@ -1,0 +1,6 @@
+nick: BOTNICK
+password: BOTPASSWD
+server: IRCSERVER
+channels: ---
+- "#pdxwebdev"
+- "#pdxbots"

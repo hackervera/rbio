@@ -14,7 +14,11 @@ class Bus
     @threads << Thread.new do
       listener.subscribe channel do |on|
         on.message do |chan, message|
-          proc.(JSON.parse message)
+          begin
+            proc.(JSON.parse message)
+          rescue
+
+          end
         end
       end
     end
