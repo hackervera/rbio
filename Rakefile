@@ -1,7 +1,8 @@
 require 'redis'
 require 'json'
 require 'cgi'
-require_relative 'lib/bus'
+require 'superfeedr'
+require_relative 'lib/rbio/bus'
 
 bus = Bus.new
 
@@ -48,7 +49,7 @@ end
 
 
 task :twitter_test do
-  bus.send "rbio::twitter::publish_message",  :message => "Sending test to twitter"
+  bus.send "rbio::twitter::publish_message", :message => "Sending test to twitter"
 end
 
 
@@ -62,12 +63,31 @@ task :verify_user do
 end
 
 task :msg_tyler do
- bus.send "rbio::irc::send_msg_user", :user => "tjgillies", :message => "yo dawg"
+  bus.send "rbio::irc::send_msg_user", :user => "tjgillies", :message => "yo dawg"
 end
 
 
 task :check_dms do
   bus.send "rbio::twitter::check_dms", :foo => :bar
+end
+
+
+task :subscribe do
+  Superfeedr.connect("tjgillies@superfeedr.com", "kidid1th") do
+
+    Superfeedr.subscribe("http://tylermaui.blogspot.com/feeds/posts/default") do |result|
+      puts "Subscribed to Notifixious' blog" if result
+    end
+  end
+end
+
+task :start_bot do
+  `ruby scripts/example_bot.rb`
+end
+
+
+task :send_test do
+  bus.send "test_message", :message => "The time is now #{Time.now}, the system has been up for #{`uptime`}" , :nick => "tjgillies"
 end
 
 
