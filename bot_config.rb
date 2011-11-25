@@ -1,6 +1,6 @@
-def check_command(options)
-  user = options[:user]
+def execute(options)
   match = options[:message]
+  user = options[:user]
 
   match =~ /auth (.*)/
   if $1 == "geoloqi"
@@ -17,9 +17,6 @@ def check_command(options)
     user.send user.friends
   end
 
-  if match =~ /rehash twitter/
-    load "../lib/rbio/services/twitter/twitter.rb"
-  end
 
   if match =~ /dms/
     user.send user.dms
@@ -38,4 +35,24 @@ def check_command(options)
     user.send user.check_timeline
   end
 
+  if match =~ /feeder (.*?) (.*)/
+    username = $1
+    password = $2
+    user.superfeedr_auth "#{username}:#{password}"
+  end
+
+  if match =~ /connect/
+    user.connect
+  end
+
+  if match =~ /tester/
+    user.send "woot"
+  end
+
+  if match =~ /subscriptions/
+    user.subscriptions
+  end
+
+
 end
+

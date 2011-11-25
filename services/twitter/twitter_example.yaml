@@ -1,5 +1,0 @@
-client: CLIENTID
-secret: CLIENTSECRET
-token: TOKENID
-token_secret: TOKENSECRET
-host: "http://HOSTNAME:PORT"

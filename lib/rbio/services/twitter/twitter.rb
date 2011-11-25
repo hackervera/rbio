@@ -7,6 +7,7 @@ class RbioTwitter
     @secret = config["secret"]
     @host = config["host"]
     @on_status = nil
+    @user = options[:user]
     @consumer = OAuth::Consumer.new(config["client"], config["secret"], :site => "http://api.twitter.com")
     bot_access_token = OAuth::AccessToken.from_hash(@consumer, :oauth_token => config["token"], :oauth_token_secret => config["token_secret"])
     bus = Bus.new
@@ -15,8 +16,11 @@ class RbioTwitter
         @on_status.call bus_data["message"]
       end
     end
-
-    timeline
+    begin
+      timeline
+    rescue NoAuth
+      @user.send "Need to log into twitter"
+    end
 
   end
 
@@ -74,7 +78,7 @@ class RbioTwitter
     oauth_token = access_token.token
     oauth_token_secret = access_token.secret
     raise "timeline already running" unless @timeline.nil?
-    raise "no token" if oauth_token.nil? || oauth_token_secret.nil?
+    raise NoAuth if oauth_token.nil? || oauth_token_secret.nil?
     TweetStream.configure do |c|
       c.consumer_key = @client
       c.consumer_secret = @secret
@@ -86,17 +90,15 @@ class RbioTwitter
     client = TweetStream::Client.new
     client.on_timeline_status do |status|
       message = "#{status.user.screen_name} says #{status.text}"
-      @on_status.call message  unless @timeline.nil?
+      @on_status.call message unless @timeline.nil?
       ""
     end
     client.userstream
 
     ""
-  rescue => e
-    ""
+
+
   end
-
-
 end
 
 

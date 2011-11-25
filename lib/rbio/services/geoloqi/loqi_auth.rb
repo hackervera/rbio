@@ -26,3 +26,8 @@ class LoqiAuth < Sinatra::Base
   end
 
 end
+
+
+Thread.new do
+  LoqiAuth.run!
+end

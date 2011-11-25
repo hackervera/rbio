@@ -37,7 +37,7 @@ class RbioBot
 
   def on_privmsg
     @bot.on :private do |m|
-      yield :nick => m.user.nick, :message => m.message
+      yield :nick => m.user.nick, :message => m.message unless m.user.nil?
     end
   end
 
