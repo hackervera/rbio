@@ -1,0 +1,5 @@
+<% @entries.sort_by{|entry| JSON.parse(entry)["time"]}.reverse.each do |entry| %>
+    <p>
+      <%= entry %>
+    </p>
+<% end %>

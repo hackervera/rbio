@@ -41,6 +41,13 @@ class RbioBot
     end
   end
 
+  def on_chanmsg
+    @bot.on :channel do |m|
+      yield :channel => m.channel.name, :nick => m.user.nick, :message => m.message
+    end
+  end
+
+
 
   def send_msg_chan(options)
     channel = @bot.channel_manager.find(options[:channel])

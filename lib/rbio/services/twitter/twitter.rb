@@ -18,7 +18,7 @@ class RbioTwitter
     end
     begin
       timeline
-    rescue NoAuth
+    rescue "no auth"
       @user.send "Need to log into twitter"
     end
 

@@ -19,6 +19,7 @@ require_relative 'rbio/services/geoloqi/geoloqi'
 require_relative 'rbio/services/feeds/feeds'
 require_relative 'rbio/services/geoloqi/loqi_auth'
 require_relative 'rbio/services/twitter/twitter_auth'
+require_relative 'rbio/services/irc/log_server'
 require_relative 'rbio/bus'
 require_relative 'rbio/user'
 
